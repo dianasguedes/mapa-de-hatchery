@@ -864,10 +864,12 @@ document.getElementById('settingsModal').addEventListener('click', e => {
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 load();
 buildGrid();
-<script>
+
+// registrar service worker (PWA)
 if ("serviceWorker" in navigator) {
  navigator.serviceWorker.register("service-worker.js");
 }
+
 </script>
 </body>
 </html>
