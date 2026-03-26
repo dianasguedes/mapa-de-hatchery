@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+
+<title>MAPA DE HATCHERY BIOS.CV</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1a3a4a">
+
+<style>
+
+  :root {
+    --sand: #e8d5a3;
+    --sand-dark: #c4a96e;
+    --ocean: #1a3a4a;
+    --ocean-mid: #2a5568;
+    --ocean-light: #3d7a8a;
+    --foam: #f0ece0;
+    --green: #4a7c59;
+    --green-light: #6aab7a;
+    --amber: #c47a1e;
+    --red: #a03030;
+    --white: #faf8f2;
+    --text: #1a2530;
+    --text-muted: #5a7080;
+    --radius: 6px;
+    --shadow: 0 2px 12px rgba(26,58,74,0.15);
+  }
+ 
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+  body {
+    font-family: 'Lato', sans-serif;
+    background: var(--ocean);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+ 
+  /* HEADER */
+  header {
+    background: var(--ocean);
+    border-bottom: 2px solid var(--ocean-light);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    font-family: 'Space Mono', monospace;
+    color: var(--sand);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-icon { font-size: 1.4rem; }
+  .header-actions { display: flex; gap: 8px; align-items: center; }
+ 
+  /* BUTTONS */
+  .btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    border: none;
+    border-radius: var(--radius);
+    padding: 8px 14px;
+    cursor: pointer;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+  .btn-sand {
+    background: var(--sand);
+    color: var(--ocean);
+  }
+  .btn-sand:hover { background: var(--sand-dark); }
+  .btn-ocean {
+    background: var(--ocean-mid);
+    color: var(--sand);
+    border: 1px solid var(--ocean-light);
+  }
+  .btn-ocean:hover { background: var(--ocean-light); }
+  .btn-green { background: var(--green); color: white; }
+  .btn-green:hover { background: var(--green-light); }
+  .btn-red { background: var(--red); color: white; }
+  .btn-red:hover { background: #c03030; }
+ 
+  /* MAIN AREA */
+  main {
+    padding: 16px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+ 
+  /* CONFIG BAR */
+  .config-bar {
+    background: var(--ocean-mid);
+    border: 1px solid var(--ocean-light);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .config-bar label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--sand);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .config-bar input[type=number] {
+    width: 64px;
+    background: var(--ocean);
+    border: 1px solid var(--ocean-light);
+    border-radius: 4px;
+    color: var(--sand);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    padding: 5px 8px;
+    text-align: center;
+  }
+  .config-bar input:focus { outline: 2px solid var(--sand-dark); }
+  .stats {
+    margin-left: auto;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .stat-pill {
+    background: var(--ocean);
+    border: 1px solid var(--ocean-light);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--sand);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .stat-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+ 
+  /* LEGEND */
+  .legend {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    padding: 0 2px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: var(--sand);
+    font-family: 'Space Mono', monospace;
+  }
+  .legend-box {
+    width: 16px; height: 16px;
+    border-radius: 3px;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+ 
+  /* GRID WRAPPER */
+  .grid-wrapper {
+    background: var(--ocean-mid);
+    border: 1px solid var(--ocean-light);
+    border-radius: var(--radius);
+    padding: 16px;
+    overflow: auto;
+    max-height: calc(100vh - 220px);
+  }
+  .grid {
+    display: grid;
+    gap: 4px;
+  }
+  .nest-cell {
+    width: 44px;
+    height: 44px;
+    border-radius: 5px;
+    border: 1.5px solid rgba(255,255,255,0.1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.58rem;
+    font-weight: 700;
+    transition: transform 0.1s, box-shadow 0.1s;
+    position: relative;
+    user-select: none;
+  }
+  .nest-cell:hover {
+    transform: scale(1.12);
+    box-shadow: 0 0 0 2px var(--sand);
+    z-index: 2;
+  }
+  .nest-cell:active { transform: scale(0.97); }
+ 
+  /* NEST STATE COLORS */
+  .state-vazio    { background: var(--ocean); color: #4a6a7a; border-color: #2a4a5a; }
+  .state-ativo    { background: #2a5c3a; color: #a0e0b0; border-color: #4a8c5a; }
+  .state-eclodido { background: #5a4a1a; color: #f0c860; border-color: #8a7030; }
+  .state-exumado  { background: #4a1a1a; color: #e08080; border-color: #7a3030; }
+  .state-monitorizar { background: #1a3a5a; color: #80b0e0; border-color: #3060a0; }
+ 
+  /* MODAL */
+  .modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,25,35,0.85);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .modal-bg.open { display: flex; }
+ 
+  .modal {
+    background: var(--foam);
+    border-radius: 10px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    animation: slideUp 0.2s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .modal-header {
+    background: var(--ocean);
+    color: var(--sand);
+    padding: 16px 20px;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .modal-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--sand);
+    font-size: 1.4rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 4px;
+  }
+  .modal-body { padding: 20px; }
+ 
+  .form-group { margin-bottom: 16px; }
+  .form-group label {
+    display: block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    background: white;
+    border: 1.5px solid #d0c8b0;
+    border-radius: var(--radius);
+    padding: 9px 12px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text);
+    transition: border-color 0.15s;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--ocean-light);
+  }
+  .form-group textarea { resize: vertical; min-height: 70px; }
+ 
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+ 
+  .state-select-group { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+  .state-btn {
+    border: 2px solid transparent;
+    border-radius: var(--radius);
+    padding: 8px 4px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    cursor: pointer;
+    text-align: center;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+  .state-btn.sel-vazio    { background: #d0dde5; color: #3a5a6a; border-color: #3a5a6a; }
+  .state-btn.sel-ativo    { background: #c0e8c8; color: #1a5a2a; border-color: #1a5a2a; }
+  .state-btn.sel-eclodido { background: #f0d880; color: #6a4a00; border-color: #8a6a00; }
+  .state-btn.sel-exumado  { background: #f0c0c0; color: #6a1a1a; border-color: #8a3030; }
+  .state-btn.sel-monitorizar { background: #c0d8f8; color: #1a3a6a; border-color: #2a5a9a; }
+  .state-btn.active { box-shadow: 0 0 0 3px var(--ocean); transform: scale(1.04); }
+ 
+  .custom-fields { border-top: 1px solid #d8d0b8; padding-top: 14px; margin-top: 4px; }
+  .custom-field-row {
+    display: flex; gap: 8px; align-items: center; margin-bottom: 8px;
+  }
+  .custom-field-row input { flex: 1; }
+  .btn-icon {
+    background: none; border: 1.5px solid #c0b898;
+    border-radius: 4px; width: 34px; height: 34px;
+    cursor: pointer; font-size: 1rem; color: var(--text-muted);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .btn-icon:hover { background: #e8e0c8; color: var(--text); }
+ 
+  .modal-footer {
+    padding: 14px 20px 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    border-top: 1px solid #d8d0b8;
+  }
+ 
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(60px);
+    background: var(--ocean);
+    color: var(--sand);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    padding: 10px 20px;
+    border-radius: 30px;
+    border: 1px solid var(--ocean-light);
+    box-shadow: var(--shadow);
+    z-index: 500;
+    transition: transform 0.3s ease;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+ 
+  /* CONFIG MODAL */
+  .config-modal {
+    background: var(--foam);
+    border-radius: 10px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    animation: slideUp 0.2s ease;
+  }
+ 
+  /* SEARCH BAR */
+  .search-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .search-bar input {
+    flex: 1;
+    background: var(--ocean-mid);
+    border: 1px solid var(--ocean-light);
+    border-radius: var(--radius);
+    padding: 8px 14px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.9rem;
+    color: var(--sand);
+  }
+  .search-bar input::placeholder { color: #4a6a7a; }
+  .search-bar input:focus { outline: 2px solid var(--sand-dark); }
+ 
+  /* HIGHLIGHT */
+  .nest-cell.highlight {
+    box-shadow: 0 0 0 3px var(--sand), 0 0 12px var(--sand);
+    z-index: 3;
+    animation: pulse 1s ease infinite;
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 0 3px var(--sand), 0 0 8px var(--sand); }
+    50%      { box-shadow: 0 0 0 3px var(--sand-dark), 0 0 20px var(--sand); }
+  }
+ 
+  @media (max-width: 600px) {
+    .form-row { grid-template-columns: 1fr; }
+    .stats { gap: 8px; }
+  }
+</style>
+</head>
+<body>
+ 
+<header>
+  <div class="logo">
+    <span class="logo-icon">🐢</span>
+    <span>MAPA DE HATCHERY BIOS.CV</span>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-ocean" onclick="openSettings()">⚙ Config</button>
+    <button class="btn btn-sand" onclick="exportCSV()">↓ CSV</button>
+  </div>
+</header>
+ 
+<main>
+  <div class="config-bar">
+    <label>Colunas
+      <input type="number" id="cols" min="1" max="100" value="25" onchange="buildGrid()">
+    </label>
+    <label>Linhas
+      <input type="number" id="rows" min="1" max="100" value="40" onchange="buildGrid()">
+    </label>
+    <div class="stats" id="stats"></div>
+  </div>
+ 
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Pesquisar ninho por número ou PIT da fêmea…" oninput="searchNest()">
+    <button class="btn btn-ocean" onclick="clearSearch()">✕</button>
+  </div>
+ 
+  <div class="legend">
+    <span class="legend-item"><span class="legend-box" style="background:#2a5c3a;border-color:#4a8c5a"></span>Ativo</span>
+    <span class="legend-item"><span class="legend-box" style="background:#5a4a1a;border-color:#8a7030"></span>Eclodido</span>
+    <span class="legend-item"><span class="legend-box" style="background:#4a1a1a;border-color:#7a3030"></span>Exumado</span>
+    <span class="legend-item"><span class="legend-box" style="background:#1a3a5a;border-color:#3060a0"></span>Monitorizar</span>
+    <span class="legend-item"><span class="legend-box" style="background:#1a3a4a;border-color:#2a4a5a"></span>Vazio</span>
+  </div>
+ 
+  <div class="grid-wrapper">
+    <div class="grid" id="grid"></div>
+  </div>
+</main>
+ 
+<!-- NEST MODAL -->
+<div class="modal-bg" id="nestModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modalTitle">Ninho #</span>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+ 
+      <div class="form-group">
+        <label>Estado do Ninho</label>
+        <div class="state-select-group">
+          <button class="state-btn sel-vazio"       data-state="vazio"       onclick="selectState(this)">Vazio</button>
+          <button class="state-btn sel-ativo"       data-state="ativo"       onclick="selectState(this)">Ativo</button>
+          <button class="state-btn sel-eclodido"    data-state="eclodido"    onclick="selectState(this)">Eclodido</button>
+          <button class="state-btn sel-exumado"      data-state="exumado"      onclick="selectState(this)">Exumado</button>
+          <button class="state-btn sel-monitorizar" data-state="monitorizar" onclick="selectState(this)">Monitorizar</button>
+        </div>
+      </div>
+ 
+      <div class="form-row">
+        <div class="form-group">
+          <label>Data de Colocação</label>
+          <input type="date" id="f_data_coloc" oninput="calcDates()">
+        </div>
+        <div class="form-group">
+          <label>PIT da Fêmea</label>
+          <input type="text" id="f_pit" placeholder="ex: 9850001234">
+        </div>
+      </div>
+ 
+      <div class="form-row">
+        <div class="form-group">
+          <label>📅 Dia 50 (prev. início eclosão)</label>
+          <input type="text" id="f_dia50" readonly placeholder="—" style="background:#e8f4e8;color:#2a5a3a;font-weight:700;cursor:default">
+        </div>
+        <div class="form-group">
+          <label>📅 Dia 60 (exumação)</label>
+          <input type="text" id="f_dia60" readonly placeholder="—" style="background:#f4f0e0;color:#5a4a10;font-weight:700;cursor:default">
+        </div>
+      </div>
+ 
+      <div class="form-group">
+        <label>Nº de Ovos</label>
+        <input type="number" id="f_ovos" min="0" placeholder="ex: 120">
+      </div>
+ 
+      <div class="form-group">
+        <label>Observações</label>
+        <textarea id="f_obs" placeholder="Notas, anomalias, condições especiais…"></textarea>
+      </div>
+ 
+      <!-- CAMPOS EXTRA -->
+      <div class="custom-fields">
+        <div class="form-group" style="margin-bottom:8px">
+          <label>Campos Personalizados</label>
+        </div>
+        <div id="customFieldsList"></div>
+        <button class="btn btn-ocean" style="width:100%;margin-top:4px" onclick="addCustomField()">+ Adicionar Campo</button>
+      </div>
+ 
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-red" onclick="clearNest()">Limpar</button>
+      <button class="btn btn-ocean" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-green" onclick="saveNest()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- SETTINGS MODAL -->
+<div class="modal-bg" id="settingsModal">
+  <div class="config-modal">
+    <div class="modal-header">
+      <span class="modal-title">⚙ Configurações</span>
+      <button class="modal-close" onclick="closeSettings()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Nome do Projeto / Temporada</label>
+        <input type="text" id="s_projeto" placeholder="ex: Tartarugario 2025">
+      </div>
+      <div class="form-group">
+        <label>Campos personalizados globais (separados por vírgula)</label>
+        <input type="text" id="s_campos" placeholder="ex: Profundidade, Temperatura, Técnico">
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px;">
+        <button class="btn btn-red" style="flex:1" onclick="resetAllData()">⚠ Limpar Todos os Dados</button>
+        <button class="btn btn-green" style="flex:1" onclick="saveSettings()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+ 
+<script>
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let nests = {};          // { nestId: { state, data_coloc, data_eclosao, pit, ovos, obs, custom:{} } }
+let settings = { projeto: 'Tartarugario 2025', globalCustomFields: [] };
+let currentNestId = null;
+let currentState = 'vazio';
+ 
+const STORAGE_KEY = 'viveiro_nests_v1';
+const SETTINGS_KEY = 'viveiro_settings_v1';
+ 
+// ─── PERSIST ─────────────────────────────────────────────────────────────────
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(nests));
+}
+function load() {
+  try { nests = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { nests = {}; }
+  try { settings = { ...settings, ...JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}') }; } catch {}
+}
+ 
+// ─── GRID ─────────────────────────────────────────────────────────────────────
+function buildGrid() {
+  const cols = parseInt(document.getElementById('cols').value) || 25;
+  const rows = parseInt(document.getElementById('rows').value) || 40;
+  const total = cols * rows;
+  const grid = document.getElementById('grid');
+  grid.style.gridTemplateColumns = `repeat(${cols}, 44px)`;
+  grid.innerHTML = '';
+ 
+  for (let i = 1; i <= total; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'nest-cell';
+    cell.id = `nest-${i}`;
+    cell.dataset.id = i;
+    cell.title = `Ninho ${i}`;
+    cell.onclick = () => openNest(i);
+    cell.textContent = i;
+    grid.appendChild(cell);
+    refreshCell(i);
+  }
+  updateStats();
+}
+ 
+function refreshCell(id) {
+  const cell = document.getElementById(`nest-${id}`);
+  if (!cell) return;
+  const nest = nests[id] || {};
+  const state = nest.state || 'vazio';
+  cell.className = `nest-cell state-${state}`;
+  cell.textContent = id;
+  // small dot indicator if has PIT
+  if (nest.pit) {
+    cell.title = `Ninho ${id} | PIT: ${nest.pit}`;
+  }
+}
+ 
+// ─── STATS ────────────────────────────────────────────────────────────────────
+function updateStats() {
+  const cols = parseInt(document.getElementById('cols').value) || 25;
+  const rows = parseInt(document.getElementById('rows').value) || 40;
+  const total = cols * rows;
+ 
+  const counts = { ativo: 0, eclodido: 0, exumado: 0, monitorizar: 0, vazio: 0 };
+  for (let i = 1; i <= total; i++) {
+    const s = (nests[i] && nests[i].state) || 'vazio';
+    counts[s] = (counts[s] || 0) + 1;
+  }
+ 
+  const colors = { ativo:'#4a8c5a', eclodido:'#8a7030', exumado:'#7a3030', monitorizar:'#3060a0', vazio:'#2a4a5a' };
+  const labels = { ativo:'Ativos', eclodido:'Eclodidos', exumado:'Exumados', monitorizar:'Monitor.', vazio:'Vazios' };
+ 
+  document.getElementById('stats').innerHTML = Object.entries(counts)
+    .filter(([k,v]) => k !== 'vazio' || v < total)
+    .map(([k,v]) => `<span class="stat-pill"><span class="stat-dot" style="background:${colors[k]}"></span>${labels[k]}: ${v}</span>`)
+    .join('');
+}
+ 
+// ─── MODAL ───────────────────────────────────────────────────────────────────
+function openNest(id) {
+  currentNestId = id;
+  const nest = nests[id] || {};
+  document.getElementById('modalTitle').textContent = `Ninho #${id}`;
+  document.getElementById('f_data_coloc').value   = nest.data_coloc  || '';
+  calcDates();
+  document.getElementById('f_pit').value           = nest.pit         || '';
+  document.getElementById('f_ovos').value          = nest.ovos        || '';
+  document.getElementById('f_obs').value           = nest.obs         || '';
+ 
+  currentState = nest.state || 'vazio';
+  document.querySelectorAll('.state-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.state === currentState);
+  });
+ 
+  // custom fields
+  const customData = nest.custom || {};
+  const cfList = document.getElementById('customFieldsList');
+  cfList.innerHTML = '';
+ 
+  // global fields from settings
+  settings.globalCustomFields.forEach(name => {
+    if (name.trim()) addCustomFieldRow(name.trim(), customData[name.trim()] || '');
+  });
+ 
+  // any extra fields saved on this nest
+  Object.entries(customData).forEach(([k,v]) => {
+    if (!settings.globalCustomFields.includes(k)) addCustomFieldRow(k, v);
+  });
+ 
+  document.getElementById('nestModal').classList.add('open');
+}
+ 
+function closeModal() {
+  document.getElementById('nestModal').classList.remove('open');
+  clearSearch();
+}
+ 
+function selectState(btn) {
+  currentState = btn.dataset.state;
+  document.querySelectorAll('.state-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+ 
+function saveNest() {
+  const custom = {};
+  document.querySelectorAll('.custom-field-row').forEach(row => {
+    const [nameInput, valInput] = row.querySelectorAll('input');
+    if (nameInput.value.trim()) custom[nameInput.value.trim()] = valInput.value;
+  });
+ 
+  nests[currentNestId] = {
+    state:        currentState,
+    data_coloc:   document.getElementById('f_data_coloc').value,
+    pit:          document.getElementById('f_pit').value.trim(),
+    ovos:         document.getElementById('f_ovos').value,
+    obs:          document.getElementById('f_obs').value.trim(),
+    custom,
+    updated:      new Date().toISOString()
+  };
+  save();
+  refreshCell(currentNestId);
+  updateStats();
+  closeModal();
+  showToast(`Ninho #${currentNestId} guardado ✓`);
+}
+ 
+function clearNest() {
+  if (!confirm(`Limpar todos os dados do Ninho #${currentNestId}?`)) return;
+  delete nests[currentNestId];
+  save();
+  refreshCell(currentNestId);
+  updateStats();
+  closeModal();
+  showToast(`Ninho #${currentNestId} limpo`);
+}
+ 
+// ─── DATE CALC ───────────────────────────────────────────────────────────────
+function addDays(dateStr, days) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  if (isNaN(d)) return '';
+  d.setDate(d.getDate() + days);
+  return d.toLocaleDateString('pt-PT', { day:'2-digit', month:'2-digit', year:'numeric' });
+}
+function calcDates() {
+  const val = document.getElementById('f_data_coloc').value;
+  document.getElementById('f_dia50').value = addDays(val, 50) || '—';
+  document.getElementById('f_dia60').value = addDays(val, 60) || '—';
+}
+ 
+// ─── CUSTOM FIELDS ────────────────────────────────────────────────────────────
+function addCustomField() {
+  addCustomFieldRow('', '');
+}
+function addCustomFieldRow(name, val) {
+  const cfList = document.getElementById('customFieldsList');
+  const row = document.createElement('div');
+  row.className = 'custom-field-row';
+  row.innerHTML = `
+    <input type="text"  placeholder="Nome do campo" value="${escHtml(name)}" style="flex:1;background:white;border:1.5px solid #d0c8b0;border-radius:6px;padding:8px 10px;font-size:0.9rem">
+    <input type="text"  placeholder="Valor"          value="${escHtml(val)}"  style="flex:1.5;background:white;border:1.5px solid #d0c8b0;border-radius:6px;padding:8px 10px;font-size:0.9rem">
+    <button class="btn-icon" onclick="this.parentElement.remove()" title="Remover">✕</button>
+  `;
+  cfList.appendChild(row);
+}
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+ 
+// ─── SETTINGS ─────────────────────────────────────────────────────────────────
+function openSettings() {
+  document.getElementById('s_projeto').value = settings.projeto || '';
+  document.getElementById('s_campos').value  = (settings.globalCustomFields || []).join(', ');
+  document.getElementById('settingsModal').classList.add('open');
+}
+function closeSettings() {
+  document.getElementById('settingsModal').classList.remove('open');
+}
+function saveSettings() {
+  settings.projeto = document.getElementById('s_projeto').value.trim();
+  settings.globalCustomFields = document.getElementById('s_campos').value
+    .split(',').map(s=>s.trim()).filter(Boolean);
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  closeSettings();
+  showToast('Configurações guardadas ✓');
+}
+function resetAllData() {
+  if (!confirm('ATENÇÃO: Apagar TODOS os dados do viveiro? Esta ação é irreversível.')) return;
+  nests = {};
+  save();
+  buildGrid();
+  showToast('Todos os dados apagados');
+}
+ 
+// ─── SEARCH ───────────────────────────────────────────────────────────────────
+function searchNest() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  document.querySelectorAll('.nest-cell').forEach(cell => cell.classList.remove('highlight'));
+  if (!q) return;
+ 
+  const cols = parseInt(document.getElementById('cols').value) || 25;
+  const rows = parseInt(document.getElementById('rows').value) || 40;
+  const total = cols * rows;
+ 
+  for (let i = 1; i <= total; i++) {
+    const nest = nests[i] || {};
+    const numMatch = String(i).includes(q);
+    const pitMatch = (nest.pit || '').toLowerCase().includes(q);
+    if (numMatch || pitMatch) {
+      const cell = document.getElementById(`nest-${i}`);
+      if (cell) {
+        cell.classList.add('highlight');
+        if (numMatch && q === String(i)) cell.scrollIntoView({ behavior:'smooth', block:'center' });
+      }
+    }
+  }
+}
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  document.querySelectorAll('.nest-cell').forEach(c => c.classList.remove('highlight'));
+}
+ 
+// ─── EXPORT CSV ───────────────────────────────────────────────────────────────
+function exportCSV() {
+  const cols = parseInt(document.getElementById('cols').value) || 25;
+  const rows = parseInt(document.getElementById('rows').value) || 40;
+  const total = cols * rows;
+ 
+  // collect all custom field names
+  const allCustomKeys = new Set();
+  for (let i = 1; i <= total; i++) {
+    Object.keys((nests[i] && nests[i].custom) || {}).forEach(k => allCustomKeys.add(k));
+  }
+  const customKeys = [...allCustomKeys];
+ 
+  const headers = ['Ninho','Estado','Data Colocação','Dia 50 (prev. eclosão)','Dia 60 (exumação)','PIT Fêmea','Nº Ovos','Observações',...customKeys,'Última Atualização'];
+  const rows_data = [];
+ 
+  for (let i = 1; i <= total; i++) {
+    const n = nests[i] || {};
+    if (!n.state || n.state === 'vazio') continue; // skip empty
+    const row = [
+      i,
+      n.state || '',
+      n.data_coloc || '',
+      addDays(n.data_coloc, 50),
+      addDays(n.data_coloc, 60),
+      n.pit || '',
+      n.ovos || '',
+      (n.obs || '').replace(/"/g,'""'),
+      ...customKeys.map(k => ((n.custom || {})[k] || '').replace(/"/g,'""')),
+      n.updated ? n.updated.slice(0,16).replace('T',' ') : ''
+    ];
+    rows_data.push(row);
+  }
+ 
+  const csv = [headers, ...rows_data]
+    .map(r => r.map(v => `"${v}"`).join(','))
+    .join('\r\n');
+ 
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `viveiro_${(settings.projeto||'ninhos').replace(/\s/g,'_')}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(`CSV exportado com ${rows_data.length} ninhos ✓`);
+}
+ 
+// ─── TOAST ───────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+ 
+// ─── CLOSE MODAL ON BG CLICK ─────────────────────────────────────────────────
+document.getElementById('nestModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeModal();
+});
+document.getElementById('settingsModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeSettings();
+});
+ 
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+load();
+buildGrid();
+<script>
+if ("serviceWorker" in navigator) {
+ navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+</body>
+</html>
